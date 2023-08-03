@@ -35,7 +35,7 @@ def get_code(location):
     return code
 
 def logout():
-    url = "https://www.payititi.com/member/logout.php"
+    url = "https://www.payititi.com/member/logout.php?forward="
     resp = session.get(url, headers=headers)
     if resp.status_code == 302 or resp.status_code == 200:
         return True
@@ -51,10 +51,7 @@ def login(_user, _password):
         "password": _password,
         "submit": "%E7%99%BB+%E5%BD%95"
     }
-
-    print('before login Cookies', session.cookies)
     resp = session.post(url, data=data, headers=headers)
-    print('after login Cookies', session.cookies)
     # cookies.update(resp.cookies) # 保存cookie
     page = BeautifulSoup(resp.text, 'html.parser')
     tags = page.find_all('h1')
@@ -103,12 +100,11 @@ def pushNotification(sendKey, title, content):
         print('server酱发送通知失败')
 
 if __name__ == "__main__":
-    # user = os.environ['PAYITITI_USER']
-    # password = os.environ['PAYITITI_PASSWORD']
-    # sendKey = os.environ['SEND_KEY']
-    user = "qinlicang"
-    password = "Qinlc770401"
-    sendKey = "SCT218351TZ85R81jSICq5lvWiMK7RsWdq"
+    user = os.environ['PAYITITI_USER']
+    password = os.environ['PAYITITI_PASSWORD']
+    sendKey = os.environ['SEND_KEY']
+    # user = "qinlicang"
+    # password = "Qinlc770401"
 
     login(user, password)
     if getSignList():

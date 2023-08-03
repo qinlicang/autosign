@@ -24,7 +24,7 @@ jobs:
         run: pip install -r ./requirements.txt
 
       - name: '运行 帕依提提自动签到'
-        run: python3 function/payititi/payititi-selenium.py
+        run: python3 function/payititi/payititi.py
         env:
           PAYITITI_USER: ${{ secrets.PAYITITI_USER }}
           PAYITITI_PASSWORD: ${{ secrets.PAYITITI_PASSWORD }}
