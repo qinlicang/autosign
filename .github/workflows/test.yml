@@ -1,6 +1,6 @@
 name: test-selenium
-
 on:
+  workflow_dispatch:
   watch:
     types: [started]
 
