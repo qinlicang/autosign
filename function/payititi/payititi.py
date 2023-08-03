@@ -91,22 +91,38 @@ def autoSign():
         'title': '%E6%8C%89%E6%97%B6%E7%AD%BE%E5%88%B0%E6%98%AF%E4%B8%AA%E5%A5%BD%E4%B9%A0%E6%83%AF%5E_%5E+%E7%AD%BE%E5%88%B0%E6%8B%BF%E5%88%86%E8%B5%B0%E4%BA%BA',
         'submit': '+%E7%82%B9%E5%87%BB%E7%AD%BE%E5%88%B0+'
     }
-    resp = session.post(url, data=data, headers=headers).json()
-    print(resp.text)
+    resp = session.post(url, data=data, headers=headers)
+    print('autosign resp:' + resp.text)
+
+def pushNotification(sendKey, title, content):
+    url = 'https://sctapi.ftqq.com/' + sendKey + '.send'
+    data = {
+        'title': title,
+        'desp': content,
+        'channel':'9'
+    }
+    resp = json.dumps(requests.post(url, data).json(), ensure_ascii=False)
+    respData = json.loads(resp)
+    print(resp)
+    if respData['code'] == 0:
+        print(f'server酱发送通知消息成功, pushid:{respData["data"]["pushid"]} readkey:{respData["data"]["readkey"]}')
+    elif respData['code'] == 40001:
+        print('server酱SEND_KEY错误')
+    else:
+        print('server酱发送通知失败')
 
 if __name__ == "__main__":
-    # send_key = os.environ['SEND_KEY']
-    # user = os.environ['PAYITITI_USER']
-    # password = os.environ['PAYITITI_PWD']
-    user = "qinlicang"
-    password = "Qinlc770401"
+    user = os.environ['PAYITITI_USER']
+    password = os.environ['PAYITITI_PASSWORD']
+    sendKey = os.environ['SEND_KEY']
+    # user = "qinlicang"
+    # password = "Qinlc770401"
 
     login(user, password)
     if getSignList():
         print('click sign')
         autoSign()
-        sendNotify.send(title="帕依提提自动签到", msg="【签到结果】\n 成功")
-
+        pushNotification(sendKey, "帕依提提自动签到", "【签到结果】完成")
 
 
 # 登录
