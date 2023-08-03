@@ -26,7 +26,6 @@ jobs:
       - name: '运行 帕依提提自动签到'
         run: python3 function/payititi/payititi.py
         env:
-          BIKA_USER: ${{ secrets.PAYITITI_USER }}
-          BIKA_PASS: ${{ secrets.PAYITITI_PASSWORD }}
+          PAYITITI_USER: ${{ secrets.PAYITITI_USER }}
+          PAYITITI_PASSWORD: ${{ secrets.PAYITITI_PASSWORD }}
           SEND_KEY: ${{ secrets.SEND_KEY }}
-          PUSH_KEY: ${{ secrets.PUSH_KEY }}
