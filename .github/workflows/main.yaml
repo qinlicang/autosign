@@ -1,4 +1,4 @@
-name: 帕依提提自动签到
+name: 帕依提提自动签到-selenium
 
 on:
   workflow_dispatch:
