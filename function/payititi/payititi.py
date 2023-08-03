@@ -5,18 +5,7 @@ import json,time,random,re,sys,os
 from urllib.parse import quote
 import requests
 from bs4 import BeautifulSoup
-from sendNotify import *
 
-# 设置中国时区+8
-# if os.environ['OS_TZ']:
-#     os.environ['TZ'] = 'UTC'+str(-int(os.environ['OS_TZ']))+'CN'
-#     time.tzset()
-# else:
-#     os.environ['TZ'] = 'UTC-8CN'
-#     time.tzset()
-# now = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-
-sendNotify = sendNotify()
 session = requests.session()
 
 headers = {
@@ -44,7 +33,6 @@ def get_code(location):
     code_pattern = re.compile("(?<=access=).*?(?=&)")
     code = code_pattern.findall(location)[0]
     return code
-
 
 def logout():
     url = "https://www.payititi.com/member/logout.php?forward="
