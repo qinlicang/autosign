@@ -1,0 +1,37 @@
+name: 帕依提提自动签到
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '00 12 * * *'
+  watch:
+    types: [started]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    if: ${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: 'Set up Python'
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+
+      - name: 'Install requirements'
+        run: |
+          pip install --upgrade pip
+          pip install -r ./requirements.txt
+
+      - name: Prepare chromedriver
+        uses: nanasess/setup-chromedriver@v2
+        
+      - name: 'Working'
+        run: |
+          python3 function/payititi/payititi-selenium.py
+        env:
+          PAYITITI_USER: ${{ secrets.PAYITITI_USER }}
+          PAYITITI_PASSWORD: ${{ secrets.PAYITITI_PASSWORD }}
+          SEND_KEY: ${{ secrets.SEND_KEY }}

@@ -7,39 +7,64 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import UnexpectedAlertPresentException
 from selenium.common.exceptions import NoAlertPresentException
 from datetime import datetime
+import requests
+# from selenium.webdriver import ActionChains
+# from selenium.webdriver.common.keys import Keys
+# from selenium.webdriver.support.ui import WebDriverWait
+# from selenium.webdriver.support import expected_conditions as EC
 
-def getLastSignTime(browser):
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument('--no-sandbox') # 解决DevToolsActivePort文件不存在的报错
+chrome_options.add_argument('window-size=1920x1080') # 指定浏览器分辨率
+chrome_options.add_argument('--disable-gpu') # 谷歌文档提到需要加上这个属性来规避bug
+chrome_options.add_argument('--headless') # 浏览器不提供可视化页面. linux下如果系统不支持可视化不加这条会启动失败
+
+def get_web_driver():
+    chromedriver = "/usr/bin/chromedriver"
+    os.environ["webdriver.chrome.driver"] = chromedriver
+    driver = webdriver.Chrome(executable_path=chromedriver, chrome_options=chrome_options)
+    driver.implicitly_wait(10) # 所有的操作都可以最长等待10s
+    return driver
+
+
+def getLastSignTime(browser, sendKey):
     signTime = browser.find_element(By.CLASS_NAME,  'px11')
-    print(f'signTime:{signTime.text}')
     curDate = datetime.now().strftime('%Y-%m-%d')
+    print(f'signTime:{signTime.text} curDate:{curDate}')
     if len(signTime.text) > 10 and signTime.text[0:10] == curDate :
-        pushNotification(sendKey, "帕依提提自动签到", "【签到结果】完成")
+        print(f'invoke pushNotification')
+        pushNotification(sendKey, f"帕依提提自动签到", "【签到时间】{signTime.text}")
 
-def autoSign(_user, _password):
-    browser = webdriver.Chrome()
+def autoSign(sendKey, user, password):
+    browser = get_web_driver()
+    print('selenium load web driver successfully')
+    # browser = webdriver.Chrome()
     browser.get('https://www.payititi.com/member/login/?forward=https%3A%2F%2Fwww.payititi.com%2Fmember%2F')
+    print('selenium load login page')
 
     try:
-        browser.find_element(By.NAME, 'username').send_keys('qinlicang')
-        browser.find_element(By.NAME, 'password').send_keys('Qinlc770401')
+        browser.find_element(By.NAME, 'username').send_keys(user)
+        browser.find_element(By.NAME, 'password').send_keys(password)
         browser.find_element(By.NAME, 'submit').click()
     finally:
         time.sleep(5)
 
+    print('selenium click login button')
     h1 = browser.find_element(By.TAG_NAME, 'h1')
-    print(f"login:{h1.text}")
+    print(f"login result:{h1.text}")
     # <h1>qinlicang，欢迎使用帕依提提</h1>
 
     # get cookies from selenium
-    cookies = browser.get_cookies()
-    for cookie in cookies:
-        print(f'cookie:{cookie["name"]}:{cookie["value"]}')
+    # cookies = browser.get_cookies()
+    # for cookie in cookies:
+    #     print(f'cookie:{cookie["name"]}:{cookie["value"]}')
         
     browser.get('https://www.payititi.com/member/credit/?action=qiandao')
     try:
+        print('selenium click sign button')
         browser.find_element(By.CSS_SELECTOR, 'input[name="submit"][class="btn"]').click()
         time.sleep(1)
-        getLastSignTime(browser)
+        getLastSignTime(browser, sendKey)
 
     except UnexpectedAlertPresentException as e:
         print('UnexpectedAlertPresentException:' + e.msg)
@@ -57,7 +82,7 @@ def autoSign(_user, _password):
             finally:
                 print('browser.switch_to.alert')
 
-            getLastSignTime(browser)
+            getLastSignTime(browser, sendKey)
             print('getLastSignTime finished')
 
     browser.close()
@@ -69,9 +94,11 @@ def pushNotification(sendKey, title, content):
         'desp': content,
         'channel':'9'
     }
+
+    print(f'pushNotification request: url:{url} data:{data}')
     resp = json.dumps(requests.post(url, data).json(), ensure_ascii=False)
+    print('pushNotification response:' + resp)
     respData = json.loads(resp)
-    print(resp)
     if respData['code'] == 0:
         print(f'server酱发送通知消息成功, pushid:{respData["data"]["pushid"]} readkey:{respData["data"]["readkey"]}')
     elif respData['code'] == 40001:
@@ -87,5 +114,5 @@ if __name__ == "__main__":
     # password = "Qinlc770401"
     # sendKey = "SCT218351TZ85R81jSICq5lvWiMK7RsWdq"
 
-    autoSign(user, password)
+    autoSign(sendKey, user, password)
     
