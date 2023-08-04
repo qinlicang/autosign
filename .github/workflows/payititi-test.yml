@@ -1,7 +1,6 @@
 name: payititi-test-selenium
 
 on:
-  workflow_dispatch:
   schedule:
     - cron: '00 12 * * *'
   watch:
@@ -11,8 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
-
+  test-selenium-script:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,7 +23,7 @@ jobs:
           python-version: 3.11
 
       - name: Install Chrome
-        uses: browser-actions/setup-chrome@v1
+        uses: browser-actions/setup-chrome@master
         with:
           chrome-version: stable
         id: setup-chrome
