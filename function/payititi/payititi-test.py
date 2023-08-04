@@ -13,8 +13,8 @@ if __name__ == "__main__":
     chrome_options.add_argument('--disable-gpu') # 谷歌文档提到需要加上这个属性来规避bug
     chrome_options.add_argument('--headless') # 浏览器不提供可视化页面. linux下如果系统不支持可视化不加这条会启动失败
 
-    chromedriver = "/usr/bin/chromedriver"
+    # chromedriver = "/usr/bin/chromedriver"
     print('selenium load web driver successfully')
-    driver = webdriver.Chrome(executable_path=chromedriver, options=chrome_options)
+    driver = webdriver.Chrome(options=chrome_options) # executable_path=chromedriver, 
     driver.get('https://www.payititi.com')
     print(f'selenium load payititi page:{driver.title}')
