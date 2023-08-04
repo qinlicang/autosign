@@ -1,6 +1,11 @@
 name: test-selenium
+
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '00 12 * * *'
+  watch:
+    types: [started]
 
 jobs:
   build:
