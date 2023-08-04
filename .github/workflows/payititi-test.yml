@@ -27,7 +27,7 @@ jobs:
       - name: Install Chrome
         uses: browser-actions/setup-chrome@v1
         with:
-          chrome-version: '115.0.5790.170'
+          chrome-version: stable
         id: setup-chrome
       - run: |
           echo Installed chrome version: ${{ steps.setup-chrome.outputs.chrome-version }}
