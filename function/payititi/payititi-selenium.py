@@ -38,8 +38,8 @@ def getLastSignTime(browser, sendKey):
 
 def autoSign(sendKey, user, password):
     # browser = get_web_driver()
-    browser = webdriver.Chrome(options=chrome_options) # executable_path=chromedriver,
-    browser.implicitly_wait(10) # 所有的操作都可以最长等待10s
+    browser = webdriver.Chrome() # executable_path=chromedriver, options=chrome_options
+    # browser.implicitly_wait(10) # 所有的操作都可以最长等待10s
     
     print('selenium load web driver successfully')
     # browser = webdriver.Chrome()
