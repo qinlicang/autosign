@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 # python >=3.8
 
+import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
@@ -18,3 +19,5 @@ if __name__ == "__main__":
     driver = webdriver.Chrome(options=chrome_options) # executable_path=chromedriver, 
     driver.get('https://www.payititi.com')
     print(f'selenium load payititi page:{driver.title}')
+    time.sleep(10)
+    driver.close()
