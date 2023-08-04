@@ -37,7 +37,10 @@ def getLastSignTime(browser, sendKey):
         pushNotification(sendKey, f"帕依提提自动签到", "【签到时间】{signTime.text}")
 
 def autoSign(sendKey, user, password):
-    browser = get_web_driver()
+    # browser = get_web_driver()
+    browser = webdriver.Chrome(options=chrome_options) # executable_path=chromedriver,
+    browser.implicitly_wait(10) # 所有的操作都可以最长等待10s
+    
     print('selenium load web driver successfully')
     # browser = webdriver.Chrome()
     browser.get('https://www.payititi.com/member/login/?forward=https%3A%2F%2Fwww.payititi.com%2Fmember%2F')
