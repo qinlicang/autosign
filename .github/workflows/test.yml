@@ -33,7 +33,7 @@ jobs:
     - name: Install chromedriver
       uses: nanasess/setup-chromedriver@master
       with:
-          chromedriver-version: '88.0.4324.96'
+          chromedriver-version: '115.0.5790.170'
           
     - name: Working
       run: |
