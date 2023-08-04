@@ -5,66 +5,43 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: ${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}
     steps:
-      - name: Checkout
+      - name: Install Checkout
         uses: actions/checkout@v3
 
-      - name: 'Set up Python'
+      - name: Install Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
 
-    - name: Install chrome
-      uses: browser-actions/setup-chrome@latest
-      with:
-        chrome-version: "latest"
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@latest
+        with:
+          chrome-version: "latest"
 
-    # - name: Install chrome
-    #   run: |
-    #     sudo apt-get install google-chrome-stable
-    #     google-chrome --version
-    #     google-chrome-stable --version
-    #     google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
-    #     whereis google-chrome-stable        
-
-    - name: Install chromedriver
-      # uses: nanasess/setup-chromedriver@v2
-      uses: nanasess/setup-chromedriver@master
-      with:
-        chromedriver-version: '88.0.4324.96'
-
-      # - uses: ./install-browser
-      #   with:
-      #     runner: "selenium"
-      #     playwright-version: ${{ matrix.test-config.playwright-version }}
-      #     browser: "chrome",
-      #     browser-version: "latest",
-      #     driver-version: "latest",
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      # - name: Check installation
-      #   shell: bash
       #   run: |
-      #     python install-browser/test_installation.py | tee result.log
-      #     grep "selenium/chrome" result.log
+      #     sudo apt-get install google-chrome-stable
+      #     google-chrome --version
+      #     google-chrome-stable --version
+      #     google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
+      #     whereis google-chrome-stable        
 
-     - name: 'Install requirements'
+      - name: Install chromedriver
+        # uses: nanasess/setup-chromedriver@v2
+        uses: nanasess/setup-chromedriver@master
+        with:
+          chromedriver-version: '88.0.4324.96'
+
+     - name: Install requirements
         run: |
           pip install --upgrade pip
           pip install -r ./requirements.txt
-
-      - name: Prepare chromedriver
-        uses: nanasess/setup-chromedriver@v2
         
-      - name: 'Working'
+      - name: Working
         run: |
           python3 function/payititi/payititi-selenium.py
         env:
           PAYITITI_USER: ${{ secrets.PAYITITI_USER }}
           PAYITITI_PASSWORD: ${{ secrets.PAYITITI_PASSWORD }}
           SEND_KEY: ${{ secrets.SEND_KEY }}
-
-      - name: '安装依赖包'
-        run: pip install -r ./requirements.txt
-
-      - name: '运行 帕依提提自动签到'
-        run: pip show selenium
