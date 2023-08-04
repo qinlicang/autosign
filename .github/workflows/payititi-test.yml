@@ -24,7 +24,7 @@ jobs:
           python-version: 3.11
 
       - name: Install Chrome
-        uses: browser-actions/setup-chrome@master
+        uses: browser-actions/setup-chrome@v1.2.2
         with:
           chrome-version: stable
         id: setup-chrome
