@@ -80,26 +80,24 @@ def autoSign(sendKey, user, password):
         browser.find_element(By.NAME, 'username').send_keys(user)
         browser.find_element(By.NAME, 'password').send_keys(password)
         browser.find_element(By.NAME, 'submit').click()
-    finally:
         time.sleep(5)
 
-    print('selenium click login button')
-    h1 = browser.find_element(By.TAG_NAME, 'h1')
-    print(f"login result:{h1.text}")
-    # <h1>qinlicang，欢迎使用帕依提提</h1>
+        # print('selenium click login button')
+        # h1 = browser.find_element(By.TAG_NAME, 'h1')
+        # print(f"login result:{h1.text}")
+        # <h1>qinlicang，欢迎使用帕依提提</h1>
 
-    # get cookies from selenium
-    # cookies = browser.get_cookies()
-    # for cookie in cookies:
-    #     print(f'cookie:{cookie["name"]}:{cookie["value"]}')
-        
-    browser.get('https://www.payititi.com/member/credit/?action=qiandao')
-    try:
+        # get cookies from selenium
+        # cookies = browser.get_cookies()
+        # for cookie in cookies:
+        #     print(f'cookie:{cookie["name"]}:{cookie["value"]}')
+            
+        browser.get('https://www.payititi.com/member/credit/?action=qiandao')
+
         print('selenium click sign button')
         browser.find_element(By.CSS_SELECTOR, 'input[name="submit"][class="btn"]').click()
         time.sleep(1)
         getLastSignTime(browser, sendKey)
-
     except UnexpectedAlertPresentException as e:
         print('UnexpectedAlertPresentException:' + e.msg)
         if 'Alert' in str(e):
@@ -118,8 +116,10 @@ def autoSign(sendKey, user, password):
 
             getLastSignTime(browser, sendKey)
             print('getLastSignTime finished')
-
-    browser.close()
+    finally:
+        browser.close()
+        browser.quit()
+        print('selenium browser quit')
 
 def pushNotification(sendKey, title, content):
     url = 'https://sctapi.ftqq.com/' + sendKey + '.send'
