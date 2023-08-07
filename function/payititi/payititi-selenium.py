@@ -8,21 +8,21 @@ from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import UnexpectedAlertPresentException
 from selenium.common.exceptions import NoAlertPresentException
+from selenium.webdriver.support.wait import WebDriverWait
 from datetime import datetime
 import requests
 # from selenium.webdriver import ActionChains
 # from selenium.webdriver.common.keys import Keys
-# from selenium.webdriver.support.ui import WebDriverWait
 # from selenium.webdriver.support import expected_conditions as EC
 
 options = Options()
-options.add_argument('--disable-dev-shm-usage') # 在某些VM环境中，/dev/shm分区太小，导致Chrome发生故障或崩溃（请参阅）。 使用此标志解决此问题（临时目录将始终用于创建匿名共享内存文件）
+# options.add_argument('--disable-dev-shm-usage') # 在某些VM环境中，/dev/shm分区太小，导致Chrome发生故障或崩溃（请参阅）。 使用此标志解决此问题（临时目录将始终用于创建匿名共享内存文件）
 options.add_argument('--no-sandbox') # 对通常为沙盒的所有进程类型禁用沙盒。
 options.add_argument('window-size=1920x1080') # 指定浏览器分辨率
 options.add_argument('--disable-gpu') # 谷歌文档提到需要加上这个属性来规避bug
 options.add_argument('--headless') # 浏览器不提供可视化页面. linux下如果系统不支持可视化不加这条会启动失败
 options.add_argument('--hide-scrollbars') #隐藏滚动条, 应对一些特殊页面
-options.add_argument('blink-settings=imagesEnabled=false') #不加载图片, 提升速度
+# options.add_argument('blink-settings=imagesEnabled=false') #不加载图片, 提升速度
 
 # --no-first-run：跳过“首次运行”任务，无论它实际上是否是“首次运行”。 会被kForceFirstRun参数覆盖。这不会删除“首次运行”步骤，因此也不能防止在没有此标志的情况下下次启动chrome时发生首次运行。
 # --start-maximized：无论以前的任何设置如何，都以最大化（全屏）的方式启动浏览器。
@@ -83,6 +83,7 @@ def autoSign(sendKey, user, password):
         browser.find_element(By.NAME, 'password').send_keys(password)
         browser.find_element(By.NAME, 'submit').click()
         time.sleep(5)
+        # browser.save_screenshot("./logined.png")
         print(f'selenium logined page title:{browser.title}')
 
         # print('selenium click login button')
@@ -94,7 +95,6 @@ def autoSign(sendKey, user, password):
         # cookies = browser.get_cookies()
         # for cookie in cookies:
         #     print(f'cookie:{cookie["name"]}:{cookie["value"]}')
-            
         
         browser.get('https://www.payititi.com/member/credit/?action=qiandao')
         time.sleep(5)
@@ -104,9 +104,13 @@ def autoSign(sendKey, user, password):
         # print('selenium find sign button by xpath successfully')
         # signButton.click()
         # print('selenium sign button click successfully')
+        formTable = browser.find_element(By.CSS_SELECTOR, 'div[class="bd"]')
+        print(f'sign list table:{formTable.get_attribute("innerHTML")}')
 
-        browser.find_element(By.CSS_SELECTOR, 'input[type="submit"][name="submit"][class="btn"]').click()
-        print('selenium find sign button by CSS_SELECTOR successfully')
+        signButton = browser.find_element(By.CSS_SELECTOR, 'input[type="submit"][name="submit"][class="btn"]').click()
+        # wait = WebDriverWait(browser, timeout = 5)
+        # wait.until(lambda d : signButton.is_displayed())
+        print('selenium find sign button by CSS_SELECTOR and click successfully')
         time.sleep(5)
         
         getLastSignTime(browser, sendKey)
@@ -154,6 +158,33 @@ def pushNotification(sendKey, title, content):
     else:
         print('server酱发送通知失败')
 
+headers = {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Accept-Language": "zh-CN,zh;q=0.9",
+    "Cache-Control": "max-age=0",
+    "Connection": "keep-alive",
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Host": "www.payititi.com",
+    "Origin": "https://www.payititi.com",
+    "Referer": "https://www.payititi.com/member/login/?forward=https%3A%2F%2Fwww.payititi.com%2Fmember%2F",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "same-origin",
+    "Upgrade-Insecure-Requests": "1",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"114\", \"Google Chrome\";v=\"114\"",
+    "sec-ch-ua-platform": "macOS"
+}
+
+def logout():
+    session = requests.session()
+    url = "https://www.payititi.com/member/logout.php"
+    resp = session.get(url, headers=headers)
+    if resp.status_code == 302 or resp.status_code == 200:
+        return True
+    return False
+
 if __name__ == "__main__":
     user = os.environ['PAYITITI_USER']
     password = os.environ['PAYITITI_PASSWORD']
@@ -162,4 +193,5 @@ if __name__ == "__main__":
     # password = "Qinlc770401"
     # sendKey = "SCT218351TZ85R81jSICq5lvWiMK7RsWdq"
 
+    logout()
     autoSign(sendKey, user, password)

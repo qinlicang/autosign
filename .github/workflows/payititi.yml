@@ -6,6 +6,10 @@ on:
     - cron: '00 12 * * *'
   watch:
     types: [started]
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 permissions:
   contents: read
