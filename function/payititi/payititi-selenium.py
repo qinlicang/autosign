@@ -71,17 +71,19 @@ def getLastSignTime(browser, sendKey):
         pushNotification(sendKey, "帕依提提自动签到", f"签到时间:{signTime.text}")
 
 def autoSign(sendKey, user, password):
-    print('webdriver.Chrome before')
-    browser = webdriver.Chrome(options=options)
-    print('webdriver.Chrome successfully')
-    browser.get('https://www.payititi.com/member/login/?forward=https%3A%2F%2Fwww.payititi.com%2Fmember%2F')
-    print('selenium load login page')
-
     try:
+        print('webdriver.Chrome before')
+        browser = webdriver.Chrome(options=options)
+        print('webdriver.Chrome successfully')
+        browser.get('https://www.payititi.com/member/login/?forward=https%3A%2F%2Fwww.payititi.com%2Fmember%2F')
+        time.sleep(5)
+        print(f'selenium login page title:{browser.title}')
+
         browser.find_element(By.NAME, 'username').send_keys(user)
         browser.find_element(By.NAME, 'password').send_keys(password)
         browser.find_element(By.NAME, 'submit').click()
         time.sleep(5)
+        print(f'selenium logined page title:{browser.title}')
 
         # print('selenium click login button')
         # h1 = browser.find_element(By.TAG_NAME, 'h1')
@@ -93,18 +95,20 @@ def autoSign(sendKey, user, password):
         # for cookie in cookies:
         #     print(f'cookie:{cookie["name"]}:{cookie["value"]}')
             
+        
         browser.get('https://www.payititi.com/member/credit/?action=qiandao')
         time.sleep(5)
+        print(f'selenium sign page title:{browser.title}')
 
-        print(f'selenium sign page title:{browser.title} click sign button')
-        signButton = browser.find_element(By.XPATH, '//*[@id="dform"]/table/tbody/tr[3]/td[2]/input')
-        print('selenium find sign button by xpath successfully')
-        signButton.click()
-        print('selenium sign button click successfully')
+        # signButton = browser.find_element(By.XPATH, '//*[@id="dform"]/table/tbody/tr[3]/td[2]/input')
+        # print('selenium find sign button by xpath successfully')
+        # signButton.click()
+        # print('selenium sign button click successfully')
 
-        # browser.find_element(By.CSS_SELECTOR, 'input[type="submit"][name="submit"][class="btn"]').click()
-        # print('selenium find sign button by CSS_SELECTOR successfully')
+        browser.find_element(By.CSS_SELECTOR, 'input[type="submit"][name="submit"][class="btn"]').click()
+        print('selenium find sign button by CSS_SELECTOR successfully')
         time.sleep(5)
+        
         getLastSignTime(browser, sendKey)
     except UnexpectedAlertPresentException as e:
         print('UnexpectedAlertPresentException:' + e.msg)
