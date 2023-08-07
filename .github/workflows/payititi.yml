@@ -1,13 +1,18 @@
 name: payititi-test-selenium
 
 on:
+  # 若要启用手动触发工作流，需要配置 workflow_dispatch 事件。
   workflow_dispatch:
+
+  # 通过 schedule 事件，可以在计划的时间触发工作流。  
   schedule:
     - cron: '00 12 * * *'
-  watch:
-    types: [started]
+
+  # 在推送提交或标记时运行工作流程。    
   push:
     branches: [ "main" ]
+
+  # 在工作流程存储库中发生有关拉取请求的活动时运行工作流程。
   pull_request:
     branches: [ "main" ]
 
