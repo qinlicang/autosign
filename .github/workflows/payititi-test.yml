@@ -49,3 +49,7 @@ jobs:
       - name: Working
         run: |
             python3 function/payititi/payititi-selenium.py
+        env:
+          PAYITITI_USER: ${{ secrets.PAYITITI_USER }}
+          PAYITITI_PASSWORD: ${{ secrets.PAYITITI_PASSWORD }}
+          SEND_KEY: ${{ secrets.SEND_KEY }}
