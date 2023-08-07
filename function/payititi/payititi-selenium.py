@@ -67,7 +67,7 @@ def getLastSignTime(browser, sendKey):
     print(f'signTime:{signTime.text} curDate:{curDate}')
     if len(signTime.text) > 10 and signTime.text[0:10] == curDate :
         print(f'invoke pushNotification')
-        pushNotification(sendKey, f"帕依提提自动签到", "【签到时间】{signTime.text}")
+        pushNotification(sendKey, "帕依提提自动签到", f"签到时间:{signTime.text}")
 
 def autoSign(sendKey, user, password):
     print('webdriver.Chrome before')
