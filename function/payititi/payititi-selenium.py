@@ -65,12 +65,16 @@ def autoSign(sendKey, user, password):
 
         browser.find_element(By.NAME, 'username').send_keys(user)
         browser.find_element(By.NAME, 'password').send_keys(password)
-        browser.find_element(By.NAME, 'submit').click()
-        time.sleep(5)
-               
-        browser.save_screenshot("./logined.png")
+        # browser.find_element(By.NAME, 'submit').click()
+        loginButton = browser.find_element(By.CSS_SELECTOR, 'input[type="submit"][name="submit"]')
+        loginButton.click()
+        print(f'loginButton:{loginButton.get_attribute("innerHTML")}')
+        print(f'selenium logined page title:{browser.title}')
+
         loginDiv = browser.find_element(By.XPATH, '//*[@id="signin-form"]')
-        print(f'selenium logined page title:{browser.title} login div:{loginDiv.get_attribute("innerHTML")}')
+        print(f'loginDiv:{loginDiv.get_attribute("innerHTML")}')
+        time.sleep(5)
+        # browser.save_screenshot("./logined.png")
 
         # print('selenium click login button')
         # h1 = browser.find_element(By.TAG_NAME, 'h1')
@@ -90,12 +94,14 @@ def autoSign(sendKey, user, password):
         # print('selenium find sign button by xpath successfully')
         # signButton.click()
         # print('selenium sign button click successfully')
-        formTable = browser.find_element(By.CSS_SELECTOR, 'div[class="bd"]')
-        print(f'sign list table:{formTable.get_attribute("innerHTML")}')
+        # formTable = browser.find_element(By.CSS_SELECTOR, 'div[class="bd"]')
+        # print(f'sign list table:{formTable.get_attribute("innerHTML")}')
 
-        signButton = browser.find_element(By.CSS_SELECTOR, 'input[type="submit"][name="submit"][class="btn"]').click()
-        # wait = WebDriverWait(browser, timeout = 5)
-        # wait.until(lambda d : signButton.is_displayed())
+        signButton = browser.find_element(By.CSS_SELECTOR, 'input[type="submit"][name="submit"][class="btn"]')
+        signButton.click()
+        print(f'selenium sign page title:{browser.title} click successfully')
+        print(f'signButton:{signButton.get_attribute("innerHTML")}')
+
         print('selenium find sign button by CSS_SELECTOR and click successfully')
         # time.sleep(5)
         
