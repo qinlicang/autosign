@@ -66,14 +66,15 @@ def autoSign(sendKey, user, password):
         browser.find_element(By.NAME, 'username').send_keys(user)
         browser.find_element(By.NAME, 'password').send_keys(password)
         # browser.find_element(By.NAME, 'submit').click()
-        loginButton = browser.find_element(By.CSS_SELECTOR, 'input[type="submit"][name="submit"]')
+        loginButton = browser.find_element(By.XPATH, '//*[@id="signin-form"]/div[3]/form/input[4]')
         loginButton.click()
+        time.sleep(5)
         print(f'loginButton:{loginButton.get_attribute("innerHTML")}')
-        print(f'selenium logined page title:{browser.title}')
-
         loginDiv = browser.find_element(By.XPATH, '//*[@id="signin-form"]')
         print(f'loginDiv:{loginDiv.get_attribute("innerHTML")}')
-        time.sleep(5)
+
+        print(f'selenium logined page title:{browser.title}')
+
         # browser.save_screenshot("./logined.png")
 
         # print('selenium click login button')
