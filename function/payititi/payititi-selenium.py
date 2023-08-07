@@ -14,18 +14,51 @@ import requests
 # from selenium.webdriver.support.ui import WebDriverWait
 # from selenium.webdriver.support import expected_conditions as EC
 
-chrome_options = Options()
-chrome_options.add_argument('--no-sandbox') # 解决DevToolsActivePort文件不存在的报错
-chrome_options.add_argument('window-size=1920x1080') # 指定浏览器分辨率
-chrome_options.add_argument('--disable-gpu') # 谷歌文档提到需要加上这个属性来规避bug
-chrome_options.add_argument('--headless') # 浏览器不提供可视化页面. linux下如果系统不支持可视化不加这条会启动失败
+options = Options()
+options.add_argument('--disable-dev-shm-usage') # 在某些VM环境中，/dev/shm分区太小，导致Chrome发生故障或崩溃（请参阅）。 使用此标志解决此问题（临时目录将始终用于创建匿名共享内存文件）
+options.add_argument('--no-sandbox') # 对通常为沙盒的所有进程类型禁用沙盒。
+options.add_argument('window-size=1920x1080') # 指定浏览器分辨率
+options.add_argument('--disable-gpu') # 谷歌文档提到需要加上这个属性来规避bug
+options.add_argument('--headless') # 浏览器不提供可视化页面. linux下如果系统不支持可视化不加这条会启动失败
+options.add_argument('--hide-scrollbars') #隐藏滚动条, 应对一些特殊页面
+options.add_argument('blink-settings=imagesEnabled=false') #不加载图片, 提升速度
 
-def get_web_driver():
-    chromedriver = "/usr/bin/chromedriver"
-    os.environ["webdriver.chrome.driver"] = chromedriver
-    driver = webdriver.Chrome(executable_path=chromedriver, options=chrome_options)
-    driver.implicitly_wait(10) # 所有的操作都可以最长等待10s
-    return driver
+# --no-first-run：跳过“首次运行”任务，无论它实际上是否是“首次运行”。 会被kForceFirstRun参数覆盖。这不会删除“首次运行”步骤，因此也不能防止在没有此标志的情况下下次启动chrome时发生首次运行。
+# --start-maximized：无论以前的任何设置如何，都以最大化（全屏）的方式启动浏览器。
+# --user-data-dir：浏览器存储用户配置文件的目录。
+# --disable-software-rasterizer：禁止使用3D软件光栅化器。
+# options.add_argument(‘headless’) # 无头模式
+# options.add_argument(‘window-size={}x{}’.format(width, height)) # 直接配置大小和set_window_size一样
+# options.add_argument(‘disable-gpu’) # 禁用GPU加速
+# options.add_argument(‘proxy-server={}’.format(self.proxy_server)) # 配置代理
+# options.add_argument(’–no-sandbox’) # 沙盒模式运行
+# options.add_argument(’–disable-setuid-sandbox’) # 禁用沙盒
+# options.add_argument(’–disable-dev-shm-usage’) # 大量渲染时候写入/tmp而非/dev/shm
+# options.add_argument(’–user-data-dir={profile_path}’.format(profile_path)) # 用户数据存入指定文件
+# options.add_argument('no-default-browser-check) # 不做浏览器默认检查
+# options.add_argument("–disable-popup-blocking") # 允许弹窗
+# options.add_argument("–disable-extensions") # 禁用扩展
+# options.add_argument("–ignore-certificate-errors") # 忽略不信任证书
+# options.add_argument("–no-first-run") # 初始化时为空白页面
+# options.add_argument(’–start-maximized’) # 最大化启动
+# options.add_argument(’–disable-notifications’) # 禁用通知警告
+# options.add_argument(’–enable-automation’) # 通知(通知用户其浏览器正由自动化测试控制)
+# options.add_argument(’–disable-xss-auditor’) # 禁止xss防护
+# options.add_argument(’–disable-web-security’) # 关闭安全策略
+# options.add_argument(’–allow-running-insecure-content’) # 允许运行不安全的内容
+# options.add_argument(’–disable-webgl’) # 禁用webgl
+# options.add_argument(’–homedir={}’) # 指定主目录存放位置
+# options.add_argument(’–disk-cache-dir={临时文件目录}’) # 指定临时文件目录
+# options.add_argument(‘disable-cache’) # 禁用缓存
+# options.add_argument(‘excludeSwitches’, [‘enable-automation’]) # 开发者模式
+
+
+# def get_web_driver():
+#     chromedriver = "/usr/bin/chromedriver"
+#     os.environ["webdriver.chrome.driver"] = chromedriver
+#     driver = webdriver.Chrome(executable_path=chromedriver, options=options)
+#     driver.implicitly_wait(10) # 所有的操作都可以最长等待10s
+#     return driver
 
 
 def getLastSignTime(browser, sendKey):
@@ -37,12 +70,9 @@ def getLastSignTime(browser, sendKey):
         pushNotification(sendKey, f"帕依提提自动签到", "【签到时间】{signTime.text}")
 
 def autoSign(sendKey, user, password):
-    # browser = get_web_driver()
-    browser = webdriver.Chrome() # executable_path=chromedriver, options=chrome_options
-    # browser.implicitly_wait(10) # 所有的操作都可以最长等待10s
-    
-    print('selenium load web driver successfully')
-    # browser = webdriver.Chrome()
+    print('webdriver.Chrome before')
+    browser = webdriver.Chrome(options=options)
+    print('webdriver.Chrome successfully')
     browser.get('https://www.payititi.com/member/login/?forward=https%3A%2F%2Fwww.payititi.com%2Fmember%2F')
     print('selenium load login page')
 

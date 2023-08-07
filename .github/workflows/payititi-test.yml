@@ -48,4 +48,4 @@ jobs:
 
       - name: Working
         run: |
-            python3 function/payititi/payititi-test.py
+            python3 function/payititi/payititi-selenium.py
