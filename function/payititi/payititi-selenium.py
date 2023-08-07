@@ -5,6 +5,7 @@ import json,time,os
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import UnexpectedAlertPresentException
 from selenium.common.exceptions import NoAlertPresentException
 from datetime import datetime
@@ -93,10 +94,17 @@ def autoSign(sendKey, user, password):
         #     print(f'cookie:{cookie["name"]}:{cookie["value"]}')
             
         browser.get('https://www.payititi.com/member/credit/?action=qiandao')
+        time.sleep(5)
 
-        print('selenium click sign button')
-        browser.find_element(By.CSS_SELECTOR, 'input[name="submit"][class="btn"]').click()
-        time.sleep(1)
+        print(f'selenium sign page title:{browser.title} click sign button')
+        signButton = browser.find_element(By.XPATH, '//*[@id="dform"]/table/tbody/tr[3]/td[2]/input')
+        print('selenium find sign button by xpath successfully')
+        signButton.click()
+        print('selenium sign button click successfully')
+
+        # browser.find_element(By.CSS_SELECTOR, 'input[type="submit"][name="submit"][class="btn"]').click()
+        # print('selenium find sign button by CSS_SELECTOR successfully')
+        time.sleep(5)
         getLastSignTime(browser, sendKey)
     except UnexpectedAlertPresentException as e:
         print('UnexpectedAlertPresentException:' + e.msg)
@@ -116,6 +124,8 @@ def autoSign(sendKey, user, password):
 
             getLastSignTime(browser, sendKey)
             print('getLastSignTime finished')
+    except NoSuchElementException as e:
+        print('NoSuchElementException:' + e.msg)
     finally:
         browser.close()
         browser.quit()

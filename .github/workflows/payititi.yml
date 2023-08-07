@@ -44,8 +44,8 @@ jobs:
       - name: Install requirements
         run: |
           pip install --upgrade pip
-          pip install requests beautifulsoup4 selenium
-
+          pip install -r ./requirements.txt
+          
       - name: Working
         run: |
             python3 function/payititi/payititi-selenium.py
