@@ -11,6 +11,8 @@ from selenium.common.exceptions import NoAlertPresentException
 from selenium.webdriver.support.wait import WebDriverWait
 from datetime import datetime
 import requests
+from bs4 import BeautifulSoup
+
 # from selenium.webdriver import ActionChains
 # from selenium.webdriver.common.keys import Keys
 # from selenium.webdriver.support import expected_conditions as EC
@@ -45,6 +47,55 @@ options.add_argument("–no-first-run") # 初始化时为空白页面
 # options.add_argument(’–disk-cache-dir={临时文件目录}’) # 指定临时文件目录
 # options.add_argument(‘disable-cache’) # 禁用缓存
 # options.add_argument(‘excludeSwitches’, [‘enable-automation’]) # 开发者模式
+headers = {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Accept-Language": "zh-CN,zh;q=0.9",
+    "Cache-Control": "max-age=0",
+    "Connection": "keep-alive",
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Host": "www.payititi.com",
+    "Origin": "https://www.payititi.com",
+    "Referer": "https://www.payititi.com/member/login/?forward=https%3A%2F%2Fwww.payititi.com%2Fmember%2F",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "same-origin",
+    "Upgrade-Insecure-Requests": "1",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"114\", \"Google Chrome\";v=\"114\"",
+    "sec-ch-ua-platform": "macOS"
+}
+session = requests.session()
+
+def logout():
+    url = "https://www.payititi.com/member/logout.php"
+    resp = session.get(url, headers=headers)
+    if resp.status_code == 302 or resp.status_code == 200:
+        return True
+    return False
+
+def login(user, password):
+    url = "https://www.payititi.com/member/login/?"
+    data = {
+        "forward": "https%3A%2F%2Fwww.payititi.com%2Fmember%2F",
+        "action": "login",
+        "auth": "",
+        "username": user,
+        "password": password,
+        "submit": "%E7%99%BB+%E5%BD%95"
+    }
+
+    print('login before', session.cookies)
+    resp = session.post(url, data=data, headers=headers)
+    print(f'login after Cookies:{session.cookies} resp:{resp.content}')
+    # cookies.update(resp.cookies) # 保存cookie
+    # page = BeautifulSoup(resp.text, 'html.parser')
+    # tags = page.find_all('h1')
+    # for tag in tags:
+    #     if tag.text == 'qinlicang，欢迎使用帕依提提':
+    #         return True
+    # return False
+    return True
 
 def getLastSignTime(browser, sendKey):
     signTime = browser.find_element(By.CLASS_NAME,  'px11')
@@ -63,6 +114,8 @@ def autoSign(sendKey, user, password):
         # time.sleep(5)
         print(f'selenium login page title:{browser.title}')
 
+        unloginTitle = browser.title
+
         browser.find_element(By.NAME, 'username').send_keys(user)
         browser.find_element(By.NAME, 'password').send_keys(password)
         # browser.find_element(By.NAME, 'submit').click()
@@ -74,6 +127,8 @@ def autoSign(sendKey, user, password):
         # print(f'loginDiv:{loginDiv.get_attribute("innerHTML")}')
 
         print(f'selenium logined page title:{browser.title}')
+        if unloginTitle == browser.title:
+            login(user, password)
 
         # browser.save_screenshot("./logined.png")
 
@@ -147,33 +202,6 @@ def pushNotification(sendKey, title, content):
         print('server酱SEND_KEY错误')
     else:
         print('server酱发送通知失败')
-
-headers = {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-    "Accept-Encoding": "gzip, deflate, br",
-    "Accept-Language": "zh-CN,zh;q=0.9",
-    "Cache-Control": "max-age=0",
-    "Connection": "keep-alive",
-    "Content-Type": "application/x-www-form-urlencoded",
-    "Host": "www.payititi.com",
-    "Origin": "https://www.payititi.com",
-    "Referer": "https://www.payititi.com/member/login/?forward=https%3A%2F%2Fwww.payititi.com%2Fmember%2F",
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": "same-origin",
-    "Upgrade-Insecure-Requests": "1",
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
-    "sec-ch-ua": "\"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"114\", \"Google Chrome\";v=\"114\"",
-    "sec-ch-ua-platform": "macOS"
-}
-
-def logout():
-    session = requests.session()
-    url = "https://www.payititi.com/member/logout.php"
-    resp = session.get(url, headers=headers)
-    if resp.status_code == 302 or resp.status_code == 200:
-        return True
-    return False
 
 if __name__ == "__main__":
     user = os.environ['PAYITITI_USER']
