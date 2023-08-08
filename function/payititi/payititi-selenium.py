@@ -20,7 +20,7 @@ options.add_argument('--disable-dev-shm-usage') # 在某些VM环境中，/dev/sh
 options.add_argument('--no-sandbox') # 沙盒模式运行 对通常为沙盒的所有进程类型禁用沙盒。
 options.add_argument('window-size=1920x1080') # 指定浏览器分辨率
 options.add_argument('--disable-gpu') # 禁用GPU加速 谷歌文档提到需要加上这个属性来规避bug
-# options.add_argument('--headless') # 浏览器不提供可视化页面. linux下如果系统不支持可视化不加这条会启动失败
+options.add_argument('--headless') # 浏览器不提供可视化页面. linux下如果系统不支持可视化不加这条会启动失败
 options.add_argument('--hide-scrollbars') #隐藏滚动条, 应对一些特殊页面
 options.add_argument("–no-first-run") # 初始化时为空白页面
 # options.add_argument('blink-settings=imagesEnabled=false') #不加载图片, 提升速度
@@ -103,28 +103,25 @@ def autoSign(sendKey, user, password):
         print(f'selenium sign page title:{browser.title} click successfully')
         print(f'signButton:{signButton.get_attribute("innerHTML")}')
 
-        print('selenium find sign button by CSS_SELECTOR and click successfully')
         # time.sleep(5)
-        
         getLastSignTime(browser, sendKey)
+
     except UnexpectedAlertPresentException as e:
         print('UnexpectedAlertPresentException:' + e.msg)
         if 'Alert' in str(e):
-            try:
-                # 进入窗口，获取窗口信息（获取信息后取消）
-                alertTip = browser.switch_to.alert  # 切换到弹窗
-                print(alertTip.text)
-                # # 点击取消按钮
-                # alertTip.dismiss()
-                # 点击确定按钮
-                alertTip.accept()
-            except NoAlertPresentException as e:
-                print('NoAlertPresentException:' + e.msg)
-            finally:
-                print('browser.switch_to.alert')
-
             getLastSignTime(browser, sendKey)
-            print('getLastSignTime finished')
+        #     try:
+        #         # 进入窗口，获取窗口信息（获取信息后取消）
+        #         alertTip = browser.switch_to.alert  # 切换到弹窗
+        #         print(alertTip.text)
+        #         # # 点击取消按钮
+        #         # alertTip.dismiss()
+        #         # 点击确定按钮
+        #         alertTip.accept()
+        #     except NoAlertPresentException as e:
+        #         print('NoAlertPresentException:' + e.msg)
+        #     finally:
+        #         print('browser.switch_to.alert')
     except NoSuchElementException as e:
         print('NoSuchElementException:' + e.msg)
     finally:
